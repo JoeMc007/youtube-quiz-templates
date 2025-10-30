@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage Historical Quiz Template</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:wght:400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100%;
+            font-family: 'Crimson Text', serif;
+            overflow: hidden;
+            background: #2c1810;
+        }
+        
+        .container {
+            height: 100vh;
+            position: relative;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #1a1008 0%, #2c1810 50%, #1a1008 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .paper-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 69, 19, 0.02) 2px, rgba(139, 69, 19, 0.02) 4px),
+                repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(218, 165, 32, 0.01) 2px, rgba(218, 165, 32, 0.01) 4px);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .decorative-border {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            border: 3px double #8B4513;
+            pointer-events: none;
+            box-shadow: inset 0 0 20px rgba(139, 69, 19, 0.3);
+        }
+        
+        .decorative-corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #DAA520;
+        }
+        
+        .decorative-corner.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .decorative-corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .decorative-corner.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .decorative-corner.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .timer {
+            position: absolute;
+            top: 60px;
+            right: 120px;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5em;
+            color: #DAA520;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+        
+        .quiz-content {
+            max-width: 800px;
+            z-index: 2;
+            padding: 50px;
+            background: rgba(139, 69, 19, 0.15);
+            border: 4px solid #8B4513;
+            border-radius: 5px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(218, 165, 32, 0.1);
+        }
+        
+        .question {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            color: #DAA520;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+        }
+        
+        .answers {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .answer {
+            padding: 20px 30px;
+            font-size: 1.4em;
+            background: rgba(218, 165, 32, 0.1);
+            border: 2px solid #8B4513;
+            color: #f5deb3;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Crimson Text', serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        
+        .answer:hover {
+            background: rgba(218, 165, 32, 0.2);
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.4);
+        }
+        
+        .answer.correct {
+            background: rgba(34, 139, 34, 0.3);
+            border-color: #228B22;
+            animation: correctGlow 1.5s;
+        }
+        
+        .answer.incorrect {
+            background: rgba(139, 0, 0, 0.3);
+            border-color: #8B0000;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes correctGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(34, 139, 34, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(34, 139, 34, 0.8); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="paper-texture"></div>
+        
+        <div class="decorative-corner top-left"></div>
+        <div class="decorative-corner top-right"></div>
+        <div class="decorative-corner bottom-left"></div>
+        <div class="decorative-corner bottom-right"></div>
+        
+        <div class="decorative-border"></div>
+        
+        <div class="timer" id="timer">15</div>
+        
+        <div class="quiz-content">
+            <div class="question" id="question">
+                In which year did the Battle of Gettysburg take place?
+            </div>
+            <div class="answers">
+                <div class="answer" onclick="selectAnswer(this, true)">A) 1863</div>
+                <div class="answer" onclick="selectAnswer(this, false)">B) 1862</div>
+                <div class="answer" onclick="selectAnswer(this, false)">C) 1864</div>
+                <div class="answer" onclick="selectAnswer(this, false)">D) 1861</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EDIT THESE TO CUSTOMIZE YOUR QUIZ
+        const QUESTION = "In which year did the Battle of Gettysburg take place?";
+        const ANSWERS = [
+            { text: "A) 1863", correct: true },
+            { text: "B) 1862", correct: false },
+            { text: "C) 1864", correct: false },
+            { text: "D) 1861", correct: false }
+        ];
+        const TIME_LIMIT = 15; // seconds
+
+        // Timer functionality
+        let timeLeft = TIME_LIMIT;
+        const timerElement = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 5) {
+                timerElement.style.color = '#8B0000';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                revealAnswer();
+            }
+        }, 1000);
+
+        function selectAnswer(element, isCorrect) {
+            clearInterval(countdown);
+            const allAnswers = document.querySelectorAll('.answer');
+            allAnswers.forEach(answer => {
+                answer.style.pointerEvents = 'none';
+                if (answer.textContent.includes(ANSWERS.find(a => a.correct).text.split(') ')[1])) {
+                    answer.classList.add('correct');
+                }
+            });
+            
+            if (!isCorrect) {
+                element.classList.add('incorrect');
+            }
+        }
+
+        function revealAnswer() {
+            const allAnswers = document.querySelectorAll('.answer');
+            allAnswers.forEach(answer => {
+                if (answer.textContent.includes(ANSWERS.find(a => a.correct).text.split(') ')[1])) {
+                    answer.classList.add('correct');
+                }
+            });
+        }
+
+        // Load custom question
+        document.getElementById('question').textContent = QUESTION;
+        const answersContainer = document.querySelector('.answers');
+        answersContainer.innerHTML = '';
+        ANSWERS.forEach(answer => {
+            const div = document.createElement('div');
+            div.className = 'answer';
+            div.textContent = answer.text;
+            div.onclick = () => selectAnswer(div, answer.correct);
+            answersContainer.appendChild(div);
+        });
+    </script>
+</body>
+</html>

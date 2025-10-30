@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Sleek Quiz Template</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: #0f0f23;
+        }
+        
+        .container {
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .bg-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        
+        .shape1 { width: 400px; height: 400px; top: -200px; left: -200px; }
+        .shape2 { width: 300px; height: 300px; bottom: -150px; right: -150px; }
+        .shape3 { width: 200px; height: 200px; top: 50%; right: 10%; }
+        
+        .timer {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            font-family: 'Inter', sans-serif;
+            font-size: 3em;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+        
+        .quiz-content {
+            max-width: 900px;
+            z-index: 2;
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .question {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .answers {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .answer {
+            padding: 25px 35px;
+            font-size: 1.3em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .answer:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .answer.correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            animation: correctBounce 0.6s;
+        }
+        
+        .answer.incorrect {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes correctBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 40px rgba(56, 239, 125, 0.8); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .timer-circle {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            z-index: 3;
+        }
+        
+        .timer-circle svg {
+            transform: rotate(-90deg);
+        }
+        
+        .timer-circle circle {
+            fill: none;
+            stroke: #fff;
+            stroke-width: 4;
+            stroke-dasharray: 226;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bg-shapes">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+        </div>
+        
+        <div class="timer" id="timer">12</div>
+        
+        <div class="quiz-content">
+            <div class="question" id="question">
+                What is the most advanced fighter jet in the US Air Force as of 2025?
+            </div>
+            <div class="answers">
+                <div class="answer" onclick="selectAnswer(this, true)">A) F-35 Lightning II</div>
+                <div class="answer" onclick="selectAnswer(this, false)">B) F-22 Raptor</div>
+                <div class="answer" onclick="selectAnswer(this, false)">C) F-16 Fighting Falcon</div>
+                <div class="answer" onclick="selectAnswer(this, false)">D) F-18 Super Hornet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EDIT THESE TO CUSTOMIZE YOUR QUIZ
+        const QUESTION = "What is the most advanced fighter jet in the US Air Force as of 2025?";
+        const ANSWERS = [
+            { text: "A) F-35 Lightning II", correct: true },
+            { text: "B) F-22 Raptor", correct: false },
+            { text: "C) F-16 Fighting Falcon", correct: false },
+            { text: "D) F-18 Super Hornet", correct: false }
+        ];
+        const TIME_LIMIT = 12; // seconds
+
+        // Timer functionality
+        let timeLeft = TIME_LIMIT;
+        const timerElement = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 3) {
+                timerElement.style.color = '#eb3349';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                revealAnswer();
+            }
+        }, 1000);
+
+        function selectAnswer(element, isCorrect) {
+            clearInterval(countdown);
+            const allAnswers = document.querySelectorAll('.answer');
+            allAnswers.forEach(answer => {
+                answer.style.pointerEvents = 'none';
+                if (answer.textContent.includes(ANSWERS.find(a => a.correct).text.split(') ')[1])) {
+                    answer.classList.add('correct');
+                }
+            });
+            
+            if (!isCorrect) {
+                element.classList.add('incorrect');
+            }
+        }
+
+        function revealAnswer() {
+            const allAnswers = document.querySelectorAll('.answer');
+            allAnswers.forEach(answer => {
+                if (answer.textContent.includes(ANSWERS.find(a => a.correct).text.split(') ')[1])) {
+                    answer.classList.add('correct');
+                }
+            });
+        }
+
+        // Load custom question
+        document.getElementById('question').textContent = QUESTION;
+        const answersContainer = document.querySelector('.answers');
+        answersContainer.innerHTML = '';
+        ANSWERS.forEach(answer => {
+            const div = document.createElement('div');
+            div.className = 'answer';
+            div.textContent = answer.text;
+            div.onclick = () => selectAnswer(div, answer.correct);
+            answersContainer.appendChild(div);
+        });
+    </script>
+</body>
+</html>
